@@ -23,7 +23,7 @@ impl Grid {
 pub struct Problem;
 
 impl Problem {
-    fn traverse_slop(&self, input: &Grid, step: Position) -> i64 {
+    fn traverse_slope(&self, input: &Grid, step: Position) -> i64 {
         let mut pos = (0, 0);
         let mut result = 0;
         while pos.1 < input.height {
@@ -72,14 +72,14 @@ impl Solver for Problem {
 
     fn solve_first(&self, input: &Self::Input) -> Self::Output1 {
         let step = (3, 1);
-        self.traverse_slop(input, step)
+        self.traverse_slope(input, step)
     }
 
     fn solve_second(&self, input: &Self::Input) -> Self::Output2 {
         let steps = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)];
         steps
             .iter()
-            .map(|step| self.traverse_slop(input, *step))
+            .map(|step| self.traverse_slope(input, *step))
             .product()
     }
 }

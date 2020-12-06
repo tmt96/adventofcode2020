@@ -1,6 +1,7 @@
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 mod solver;
 
 use crate::solver::Solver;
@@ -10,7 +11,7 @@ fn solve_day(day: i32) {
         // TODO: Write macro to automate solve by day
         1 => day01::Problem {}.solve(),
         2 => day02::Problem {}.solve(),
-        3 => day03::Problem {}.solve(),
+        4 => day04::Problem {}.solve(),
         d => println!("Day {} hasn't been solved yet :(", d),
     }
 }

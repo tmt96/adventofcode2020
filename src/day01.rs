@@ -1,8 +1,6 @@
-use solver::Solver;
+use crate::solver::Solver;
 use std::collections::HashSet;
 use std::io::{self, BufRead, BufReader};
-
-use crate::solver;
 
 pub struct Problem;
 

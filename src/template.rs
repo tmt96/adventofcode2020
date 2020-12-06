@@ -12,7 +12,7 @@ impl Solver for Problem {
         0
     }
 
-    fn parse_input<R: io::Seek + io::Read>(&self, r: R) -> Self::Input {
+    fn parse_input<R: io::Read>(&self, r: R) -> Self::Input {
         let r = BufReader::new(r);
         vec![0]
     }

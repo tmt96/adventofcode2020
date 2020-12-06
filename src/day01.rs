@@ -13,7 +13,7 @@ impl Solver for Problem {
         1
     }
 
-    fn parse_input<R: io::Seek + io::Read>(&self, r: R) -> Self::Input {
+    fn parse_input<R: io::Read>(&self, r: R) -> Self::Input {
         let r = BufReader::new(r);
         r.lines().flatten().flat_map(|s| s.parse::<i32>()).collect()
     }

@@ -31,8 +31,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_first() {}
+    fn test_first() {
+        let raw_input = "";
+        let problem = Problem {};
+        let input = problem.parse_input(raw_input.as_bytes());
+        assert_eq!(problem.solve_first(&input), 0);
+    }
 
     #[test]
-    fn test_second() {}
+    fn test_second() {
+        let raw_input = "";
+        let problem = Problem {};
+        let input = problem.parse_input(raw_input.as_bytes());
+        assert_eq!(problem.solve_second(&input), 0);
+    }
 }

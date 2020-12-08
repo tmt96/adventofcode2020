@@ -25,14 +25,14 @@ impl Solver for Problem {
 
     fn parse_input<R: io::Read>(&self, r: R) -> Self::Input {
         let r = BufReader::new(r);
-        let mut result = HashMap::new();
+        let mut result: Self::Input = HashMap::new();
 
         let bag_name_regex = Regex::new(r"^(?P<bag_name>\w+ \w+) bag").unwrap();
         let content_list_regex = Regex::new(r"(?P<count>\d+) (?P<child_bag>\w+ \w+) bag").unwrap();
         for rule in r.lines().flatten().filter(|l| !l.is_empty()) {
             let bag_name = bag_name_regex.captures(&rule).unwrap()["bag_name"].to_string();
             if rule.contains("no other") {
-                result.entry(bag_name).or_insert(BagEntry::default());
+                result.entry(bag_name).or_default();
             } else {
                 let mut content: BagContent = Vec::new();
                 for captures in content_list_regex.captures_iter(&rule) {
@@ -40,16 +40,13 @@ impl Solver for Problem {
                     let child_bag = captures["child_bag"].to_string();
                     result
                         .entry(child_bag.clone())
-                        .or_insert(BagEntry::default())
+                        .or_default()
                         .parents
                         .push(bag_name.clone());
                     content.push((child_bag, count));
                 }
 
-                result
-                    .entry(bag_name)
-                    .or_insert(BagEntry::default())
-                    .content = content;
+                result.entry(bag_name).or_default().content = content;
             }
         }
 

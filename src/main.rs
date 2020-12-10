@@ -7,6 +7,7 @@ mod day06;
 mod day07;
 mod day08;
 mod day09;
+mod day10;
 mod solver;
 
 use crate::solver::Solver;
@@ -23,6 +24,7 @@ fn solve_day(day: i32) {
         7 => day07::Problem {}.solve(),
         8 => day08::Problem {}.solve(),
         9 => day09::Problem {}.solve(),
+        10 => day10::Problem {}.solve(),
         d => println!("Day {} hasn't been solved yet :(", d),
     }
 }

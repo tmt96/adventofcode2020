@@ -16,7 +16,7 @@ impl Solver for Problem {
         let r = BufReader::new(r);
         let mut input: Vec<i32> = r.lines().flatten().flat_map(|s| s.parse()).collect();
         input.push(0);
-        input.sort();
+        input.sort_unstable();
         input
     }
 

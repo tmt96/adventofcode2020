@@ -45,6 +45,7 @@ impl Solver for Problem {
     }
 
     fn solve_second(&self, input: &Self::Input) -> Self::Output2 {
+        // TODO: Use Chinese Remainer Theorem: https://rosettacode.org/wiki/Chinese_remainder_theorem#Rust
         0
     }
 }

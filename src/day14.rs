@@ -2,7 +2,7 @@ use crate::solver::Solver;
 use regex::Regex;
 use std::collections::HashMap;
 use std::io::{self, BufRead, BufReader};
-use std::iter::once_with;
+use std::str;
 
 pub enum Command {
     Mask(String),
@@ -26,12 +26,6 @@ impl Command {
     }
 }
 
-fn change_nth_char(s: &str, n: usize, ch: u8) -> String {
-    let mut bytes = s.as_bytes().to_owned();
-    bytes[n] = ch;
-    String::from_utf8(bytes).unwrap()
-}
-
 pub struct Problem;
 
 impl Problem {
@@ -46,21 +40,38 @@ impl Problem {
         (num & and_mask) | or_mask
     }
 
-    fn get_masks_pt2(mask: &str) -> Box<dyn Iterator<Item = i64>> {
-        match mask.find('X') {
-            Some(i) => {
-                let mask_1 = change_nth_char(mask, i, b'1');
-                let mask_2 = change_nth_char(mask, i, b'0');
-                let iter = Self::get_masks_pt2(&mask_1);
-                Box::new(iter.chain(Self::get_masks_pt2(&mask_2)))
-            }
-            None => Box::new(once_with(move || i64::from_str_radix(mask, 2).unwrap())),
+    fn apply_mask_pt2(s: &[u8], indices: &[usize]) -> Vec<i64> {
+        if indices.is_empty() {
+            let s = s.to_owned();
+            vec![i64::from_str_radix(str::from_utf8(&s).unwrap(), 2).unwrap()]
+        } else {
+            let first_index = indices[0];
+            [b'1', b'0']
+                .iter()
+                .flat_map(|ch| {
+                    let mut m = s.to_owned();
+                    m[first_index] = *ch;
+                    Self::apply_mask_pt2(&m, &indices[1..])
+                })
+                .collect()
         }
     }
 
-    fn mask_pt2(num: i64, mask: &str) -> Box<dyn Iterator<Item = i64>> {
-        let masks = Self::get_masks_pt2(mask.to_string()).map(move |m| num & m);
-        Box::new(masks)
+    fn mask_pt2(num: i64, mask: &str) -> Vec<i64> {
+        let num = format!("{:036b}", num);
+        let num = num.as_bytes();
+        let mask = mask.as_bytes();
+
+        let masked_num: Vec<_> = num
+            .iter()
+            .zip(mask.iter())
+            .map(|(&n, &m)| match m {
+                b'0' => n,
+                m => m,
+            })
+            .collect();
+        let indices: Vec<_> = (0..36).filter(|&i| masked_num[i] == b'X').collect();
+        Self::apply_mask_pt2(&masked_num, &indices)
     }
 }
 
@@ -98,20 +109,20 @@ impl Solver for Problem {
 
     fn solve_second(&self, input: &Self::Input) -> Self::Output2 {
         let mut mask = "";
-        let mut address_space = [0; 1 << 36];
+        let mut address_space = HashMap::new();
         for command in input.iter() {
             match command {
                 Command::Mask(s) => mask = s,
                 Command::Write { addr, val } => {
                     let addr_list = Self::mask_pt2(*addr, mask);
                     for new_addr in addr_list {
-                        address_space[new_addr as usize] = *val;
+                        address_space.insert(new_addr, *val);
                     }
                 }
             }
         }
 
-        address_space.iter().sum()
+        address_space.values().sum()
     }
 }
 
@@ -133,10 +144,10 @@ mem[8] = 0
 
     #[test]
     fn test_second() {
-        let raw_input = "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
-mem[8] = 11
-mem[7] = 101
-mem[8] = 0
+        let raw_input = "mask = 000000000000000000000000000000X1001X
+mem[42] = 100
+mask = 00000000000000000000000000000000X0XX
+mem[26] = 1
 ";
         let problem = Problem {};
         let input = problem.parse_input(raw_input.as_bytes());
